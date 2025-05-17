@@ -6,7 +6,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
@@ -48,36 +51,48 @@ fun MapScreen(
         sheetContentColor = Color.White,
         containerColor = Color(0xFF0A121E)
     ) { paddingValues ->
-        // Üstteki alan
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .pointerInput(Unit) {
-                    detectHorizontalDragGestures { _, dragAmount ->
-                        if (dragAmount > 20) isLeftSheetVisible = true
-                        if (dragAmount < -20) isLeftSheetVisible = false
-                    }
-                }
-        ){
-            MapComponent { navigateBack() }
 
-            AnimatedVisibility(
-                visible = isLeftSheetVisible,
-                enter = slideInHorizontally(
-                    initialOffsetX = { -it },
-                    animationSpec = tween(300)
-                ),
-                exit = slideOutHorizontally(
-                    targetOffsetX = { -it },
-                    animationSpec = tween(300)
-                )
+        MapComponent { navigateBack()}
+        if (!isLeftSheetVisible) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(60.dp)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures { _, dragAmount ->
+                            if (dragAmount > 20) isLeftSheetVisible = true
+                        }
+                    }
+                    .zIndex(2f)
+            )
+        }
+        AnimatedVisibility(
+            visible = isLeftSheetVisible,
+            enter = slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(300)
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -it },
+                animationSpec = tween(300)
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(310.dp)
+                    .pointerInput(Unit) {
+                        detectHorizontalDragGestures { _, dragAmount ->
+                            if (dragAmount < -20) isLeftSheetVisible = false
+                        }
+                    }
             ) {
                 RoutePersonaLeftSheet(isVisible = isLeftSheetVisible)
             }
+        }
             LeftSheetToggleButton(
                 isOpen = isLeftSheetVisible,
                 onToggle = { isLeftSheetVisible = !isLeftSheetVisible }
             )
         }
-    }
 }

@@ -18,6 +18,7 @@ mapsCompose = "2.11.4"
 coil = "2.3.0"
 navCompose = "2.6.0"
 room = "2.6.1"
+firebaseAuthKtx = "23.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -65,6 +66,7 @@ maps-compose = { group = "com.google.maps.android", name = "maps-compose", versi
 maps-services = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "maps" }
 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navCompose" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 
 
 [plugins]

@@ -1,5 +1,6 @@
 package com.example.huckathon.presentation.screens.register
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,19 +14,31 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 @Composable
-fun RegisterScreen(OnGotoLoginScreen: () -> Unit) {
+fun RegisterScreen(OnGotoLoginScreen: () -> Unit, RegisterSuccesful: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPassword by remember { mutableStateOf("") }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+
+    lateinit var auth: FirebaseAuth
+    auth = Firebase.auth
 
     Box(
         modifier = Modifier
@@ -120,14 +133,34 @@ fun RegisterScreen(OnGotoLoginScreen: () -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { /* Handle login */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
-                shape = RoundedCornerShape(10.dp)
+                onClick = {
+                    isLoading = true
+                    auth.createUserWithEmailAndPassword(email, password)
+                        // don't pass 'this' here
+                        .addOnCompleteListener { task ->
+                            isLoading = false
+                            if (task.isSuccessful) {
+                                RegisterSuccesful()
+                            } else {
+                                // show a toast or inline error
+                                errorMessage = task.exception?.localizedMessage
+                                Toast
+                                    .makeText(context, errorMessage ?: "Registration failed", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                        }
+                },
+                enabled = !isLoading
             ) {
-                Text("Register", color = Color.White)
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                        color = Color.White
+                    )
+                } else {
+                    Text("Register")
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))

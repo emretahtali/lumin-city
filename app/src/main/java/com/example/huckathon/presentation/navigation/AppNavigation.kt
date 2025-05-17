@@ -28,6 +28,11 @@ fun AppNavigation(startDestination: String) {
             LoginScreen(
                 OnGotoRegisterScreen = {
                     navController.navigate(Screen.Register.route)
+                },
+                LoginSuccesful = {
+                    navController.navigate(Screen.MapScreen.route) {
+                        popUpTo(Screen.Login.route) { inclusive = true }
+                    }
                 }
             )
         }
@@ -36,6 +41,11 @@ fun AppNavigation(startDestination: String) {
             RegisterScreen(
                 OnGotoLoginScreen = {
                     navController.navigate(Screen.Login.route)
+                },
+                RegisterSuccesful = {
+                    navController.navigate(Screen.MainScreen.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
+                    }
                 }
             )
         }

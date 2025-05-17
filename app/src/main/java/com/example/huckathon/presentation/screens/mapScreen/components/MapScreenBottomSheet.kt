@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
+import com.example.huckathon.domain.models.TransportOption
 
 private val BottomSheetBackground = Color(0xFF1E2A3A)
 private val BottomSheetText = Color(0xFFB0B8C1)
@@ -33,6 +34,7 @@ private val BottomSheetName = Color.White
 @Composable
 fun CityBottomSheet(
     city: City,
+    onTransportOptionSelected: (TransportOption, City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -97,7 +99,11 @@ fun CityBottomSheet(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             city.transportOptions.forEach { option ->
-                TransportBottomSheetItem(option = option)
+                TransportBottomSheetItem(
+                    option = option,
+                    city = city,
+                    onOptionSelected = onTransportOptionSelected
+                )
             }
         }
     }

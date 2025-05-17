@@ -1,10 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.parcelize")
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
 }
-
 android {
     namespace = "com.example.huckathon"
     compileSdk = 35

@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.huckathon.domain.models.City
+import com.example.huckathon.domain.models.TransportOption
 import com.example.huckathon.presentation.screens.mapScreen.components.CityBottomSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.LeftSheetToggleButton
 import com.example.huckathon.presentation.screens.mapScreen.components.RoutePersonaLeftSheet
@@ -23,7 +25,7 @@ import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenV
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    viewModel: MapScreenViewModel = viewModel()
+    viewModel: MapScreenViewModel = viewModel(), onClickedPayment : (TransportOption, City) -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val selectedCity by viewModel.selectedCity.collectAsState()
@@ -34,7 +36,7 @@ fun MapScreen(
         scaffoldState = scaffoldState,
         sheetContent = {
             selectedCity?.let { city ->
-                CityBottomSheet(city = city)
+                CityBottomSheet(city = city, onClickedPayment)
             }
         },
         sheetPeekHeight = 128.dp,

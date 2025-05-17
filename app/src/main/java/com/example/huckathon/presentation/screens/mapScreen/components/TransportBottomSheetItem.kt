@@ -2,6 +2,7 @@ package com.example.huckathon.presentation.screens.mapScreen.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,14 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.huckathon.domain.models.TransportOption
 import com.example.huckathon.R
+import com.example.huckathon.domain.models.City
 
 private val BottomSheetBackground = Color(0xFF1E2A3A)
-private val BottomSheetText       = Color(0xFFB0B8C1)
-private val BottomSheetName       = Color.White
+private val BottomSheetText = Color(0xFFB0B8C1)
+private val BottomSheetName = Color.White
 
 @Composable
 fun TransportBottomSheetItem(
     option: TransportOption,
+    city: City,
+    onOptionSelected: (TransportOption, City) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -51,7 +55,8 @@ fun TransportBottomSheetItem(
                 shape = RoundedCornerShape(12.dp),
                 ambientColor = Color(0x664CAF50),
                 spotColor = Color(0x664CAF50)
-            ),
+            )
+            .clickable { onOptionSelected(option, city) },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = BottomSheetBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -122,6 +127,28 @@ fun TransportBottomSheetItem(
                         fontFamily = FontFamily.SansSerif,
                         fontWeight = FontWeight.Normal
                     )
+                }
+
+                if (option.is_payable) {
+                    Spacer(Modifier.height(2.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.credit),
+                            contentDescription = "Payment",
+                            tint = BottomSheetText,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.padding(start = 4.dp))
+                        Text(
+                            text = "${option.credit} credits",
+                            color = BottomSheetText,
+                            fontSize = 16.sp,
+                            fontFamily = FontFamily.SansSerif,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
                 }
             }
         }

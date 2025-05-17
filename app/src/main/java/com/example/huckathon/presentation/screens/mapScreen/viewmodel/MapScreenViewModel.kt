@@ -25,7 +25,9 @@ class MapScreenViewModel : ViewModel() {
             name = "Autonomous Vehicle",
             iconRes = R.drawable.auto_vehicle,
             minutesLeft = "3 min",
-            impact = "Low impact"
+            impact = "Low impact",
+            is_payable = true,
+            credit = 6
         ),
         TransportOption(
             name = "Bio-Bicycle",

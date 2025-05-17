@@ -5,6 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.huckathon.presentation.navigation.AppNavigation
 import com.example.huckathon.presentation.navigation.Screen
+import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.ui.theme.HuckathonTheme
 
 
@@ -14,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HuckathonTheme {
-                AppNavigation(startDestination = Screen.Profile.route)
+                AppNavigation(startDestination = Screen.MainScreen.route)
             }
         }
     }

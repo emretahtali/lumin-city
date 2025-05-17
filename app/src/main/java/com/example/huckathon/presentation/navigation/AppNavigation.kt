@@ -3,8 +3,8 @@ package com.example.huckathon.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import androidx.navigation.compose.rememberNavController
-import com.example.huckathon.presentation.screens.*
 import com.example.huckathon.presentation.screens.login.LoginScreen
+import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.presentation.screens.profile.ProfileScreen
 import com.example.huckathon.presentation.screens.register.RegisterScreen
 
@@ -15,19 +15,32 @@ fun AppNavigation(startDestination: String) {
         navController = navController,
         startDestination = startDestination
     ) {
+        composable(Screen.MainScreen.route) {
+            MainScreen(
+                OnGotoLoginScreen = {
+                    navController.navigate(Screen.Login.route)
+                }
+            )
+        }
 
         composable(Screen.Login.route) {
-            LoginScreen()
+            LoginScreen(
+                OnGotoRegisterScreen = {
+                    navController.navigate(Screen.Register.route)
+                }
+            )
         }
 
         composable(Screen.Register.route) {
-            RegisterScreen()
+            RegisterScreen(
+                OnGotoLoginScreen = {
+                    navController.navigate(Screen.Login.route)
+                }
+            )
         }
 
         composable(Screen.Profile.route) {
             ProfileScreen()
         }
-
-
     }
 }

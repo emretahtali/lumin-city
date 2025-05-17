@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HuckathonTheme {
-                AppNavigation(startDestination = Screen.Splash.route)
+                //AppNavigation(startDestination = Screen.Splash.route)
             }
         }
     }

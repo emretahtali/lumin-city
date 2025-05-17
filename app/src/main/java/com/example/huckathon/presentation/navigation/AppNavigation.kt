@@ -66,7 +66,8 @@ fun AppNavigation(startDestination: String) {
         composable(Screen.MapScreen.route) {
             MapScreen(
                 onClickedPayment = { option, city ->
-                    if (option.is_payable) {
+                    if (option.is_payable)
+                    {
                         navController
                             .getBackStackEntry(Screen.MapScreen.route)
                             .savedStateHandle
@@ -78,38 +79,15 @@ fun AppNavigation(startDestination: String) {
                             .set("city", city)
 
                         navController.navigate(Screen.PaymentScreen.route)
-                    } else {
+                    } else
+                    {
                         // TODO: draw route on your map here
                     }
+                },
+                navigateBack = {
+                    navController.popBackStack()
                 }
             )
         }
-
-
-        composable(Screen.PaymentScreen.route) {
-            val previousEntry = navController.getBackStackEntry(Screen.MapScreen.route)
-
-            val option = previousEntry
-                .savedStateHandle
-                .get<TransportOption>("transportOption")
-
-            val city = previousEntry
-                .savedStateHandle
-                .get<City>("city")
-
-            if (option != null && city != null) {
-                PaymentScreen(
-                    transportOption = option,
-                    city = city,
-                    onBackClick = { navController.popBackStack() },
-                    onPaymentSuccess = { /* … */ }
-                )
-            }
-        }
-        composable(Screen.QRPayScreen.route) {
-            // TODO: build your QR‐pay UI here
-            }
-        }
-
-
+    }
 }

@@ -1,3 +1,6 @@
+import java.util.Properties
+import kotlin.apply
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +8,14 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
 }
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
+}
+
 android {
     namespace = "com.example.huckathon"
     compileSdk = 35
@@ -17,6 +28,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
     }
 
     buildTypes {
@@ -82,12 +95,15 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.maps.services)
 
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.37.3")
+    implementation("androidx.compose.material3:material3:1.3.2")
+
     implementation(libs.androidx.navigation.compose)
 
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.espresso.core)
-    implementation(libs.androidx.animation.core.android)
 
     // Test
     testImplementation(libs.junit)

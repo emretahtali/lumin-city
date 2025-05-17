@@ -20,16 +20,19 @@ import com.example.huckathon.domain.models.TransportOption
 import com.example.huckathon.presentation.screens.mapScreen.components.CityBottomSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.LeftSheetToggleButton
 import com.example.huckathon.presentation.screens.mapScreen.components.RoutePersonaLeftSheet
+import com.example.huckathon.presentation.screens.mapScreen.components.MapComponent
 import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
+import kotlin.Unit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    viewModel: MapScreenViewModel = viewModel(), onClickedPayment : (TransportOption, City) -> Unit
+    viewModel: MapScreenViewModel = viewModel(),
+    onClickedPayment: (TransportOption, City) -> Unit,
+    navigateBack: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val selectedCity by viewModel.selectedCity.collectAsState()
-
     var isLeftSheetVisible by remember { mutableStateOf(false) }
 
     BottomSheetScaffold(
@@ -45,7 +48,6 @@ fun MapScreen(
         sheetContentColor = Color.White,
         containerColor = Color(0xFF0A121E)
     ) { paddingValues ->
-
         // Üstteki alan
         Box(
             modifier = Modifier
@@ -57,8 +59,7 @@ fun MapScreen(
                     }
                 }
         ){
-            // TODO: Harita buraya gelecek
-
+            MapComponent { navigateBack() }
 
             AnimatedVisibility(
                 visible = isLeftSheetVisible,
@@ -76,6 +77,7 @@ fun MapScreen(
             LeftSheetToggleButton(
                 isOpen = isLeftSheetVisible,
                 onToggle = { isLeftSheetVisible = !isLeftSheetVisible }
-            )        }
+            )
+        }
     }
 }

@@ -47,10 +47,10 @@ fun SearchBar(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(CardBackgroundColor),
-        colors = TextFieldDefaults.textFieldColors(
-            containerColor = Color.Transparent,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent
-        )
+//        colors = TextFieldDefaults.textFieldColors(
+//            containerColor = Color.Transparent,
+//            focusedIndicatorColor = Color.Transparent,
+//            unfocusedIndicatorColor = Color.Transparent
+//        )
     )
 }

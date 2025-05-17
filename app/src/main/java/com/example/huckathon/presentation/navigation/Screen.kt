@@ -1,4 +1,6 @@
 package com.example.huckathon.presentation.navigation
 
-class Screen {
+sealed class Screen(val route: String) {
+    object Login: Screen("login")
+    object Register: Screen("register")
 }

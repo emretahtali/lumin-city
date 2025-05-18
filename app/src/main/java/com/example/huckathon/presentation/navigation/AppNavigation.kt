@@ -19,6 +19,7 @@ import com.example.huckathon.presentation.screens.AIChatBot.ChatBotScreen
 import com.example.huckathon.presentation.screens.login.LoginScreen
 import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.presentation.screens.mapScreen.MapScreen
+import com.example.huckathon.presentation.screens.paymentscreen.ComingScreen
 import com.example.huckathon.presentation.screens.paymentscreen.PaymentScreen
 import com.example.huckathon.presentation.screens.paymentscreen.QRPayScreen
 import com.example.huckathon.presentation.screens.profile.ProfileScreen
@@ -83,7 +84,8 @@ fun AppNavigation(startDestination: String) {
                             .getBackStackEntry(Screen.MapScreen.route)
                             .savedStateHandle["pendingCity"]   = city
 
-                        navController.navigate(Screen.PaymentScreen.route)
+                        navController.navigate(Screen.ComingScreen.route)
+
                     } else {
                         navController
                             .getBackStackEntry(Screen.MapScreen.route)
@@ -120,6 +122,8 @@ fun AppNavigation(startDestination: String) {
                 }
             )
         }
+
+        composable(Screen.ComingScreen.route) { ComingScreen(navController) }
 
         composable(Screen.Chatbot.route) {
             ChatBotScreen(navController = navController)

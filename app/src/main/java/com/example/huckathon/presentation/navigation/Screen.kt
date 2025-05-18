@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object QRPayScreen   : Screen("qr_pay_screen")
     object Chatbot       : Screen("chatbot")
     object Settings      : Screen("settings")
+    object ComingScreen   : Screen("coming_screen")
 }

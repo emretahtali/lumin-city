@@ -86,15 +86,14 @@ fun MapComponent(
             cameraPositionState = cameraPositionState,
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             onPOIClick = { poi ->
-                Log.d("POI_CLICK", "POI name: ${poi.name}, LatLng: ${poi.latLng}, PlaceId: ${poi.placeId}")
                 viewModel.onPOIClick(context, poi)
             },
             onMapClick = {
                 viewModel.clearSelectedCity()
+                viewModel.resetNavigationData()
             },
         )
         {
-            Log.d("Poly Line Exists", polylinePoints.isNotEmpty().toString())
             if (polylinePoints.isNotEmpty()) {
                 Polyline(points = polylinePoints)
             }

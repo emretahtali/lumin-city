@@ -9,12 +9,9 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,13 +26,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
-import com.example.huckathon.network.SuggestionCard
 import com.example.huckathon.network.TransportViewModel
 import com.example.huckathon.presentation.navigation.Screen
 import com.example.huckathon.presentation.screens.mapScreen.components.CityBottomSheet
@@ -57,9 +52,17 @@ fun MapScreen(
     navController: NavHostController,
     mapVm: MapScreenViewModel = viewModel(),
     recVm: TransportViewModel = viewModel(),
-    onClickedPayment: (TransportOption, City) -> Unit,
+    onCheckAndGotoPayment: (TransportOption, City) -> Unit,
     navigateBack: () -> Unit
 ) {
+    val sheetState = rememberBottomSheetScaffoldState()
+    val selectedCity by mapVm.selectedCity.collectAsState()
+    val userLoc by mapVm.userLocation.collectAsState()
+    val peek = if (selectedCity != null) 400.dp else 0.dp
+    val peekHeight by animateDpAsState(peek, tween(100))
+    var leftOpen by remember { mutableStateOf(false) }
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
     // Scaffold for bottom bar + background
     Scaffold(
         containerColor = Color(0xFF0A121E),
@@ -100,13 +103,6 @@ fun MapScreen(
             }
         }
     ) {  innerPadding ->
-        val sheetState = rememberBottomSheetScaffoldState()
-        val selectedCity by mapVm.selectedCity.collectAsState()
-        val userLoc by mapVm.userLocation.collectAsState()
-        val peek = if (selectedCity != null) 400.dp else 0.dp
-        val peekHeight by animateDpAsState(peek, tween(100))
-        var leftOpen by remember { mutableStateOf(false) }
-        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         BottomSheetScaffold(
             modifier = Modifier.padding(innerPadding),
@@ -122,7 +118,7 @@ fun MapScreen(
                         userLocation = userLoc!!,
                         userId = userId,
                         recVm = recVm,
-                        onOptionSelected = onClickedPayment,
+                        onCheckAndGotoPayment = onCheckAndGotoPayment,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }

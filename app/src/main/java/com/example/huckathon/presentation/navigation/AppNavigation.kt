@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 import androidx.navigation.compose.rememberNavController
 import com.example.huckathon.domain.models.City
@@ -23,7 +20,6 @@ import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.presentation.screens.mapScreen.MapScreen
 import com.example.huckathon.presentation.screens.paymentscreen.PaymentScreen
 import com.example.huckathon.presentation.screens.paymentscreen.QRPayScreen
-import com.example.huckathon.presentation.screens.paymentscreen.viewmodel.PaymentScreenViewModel
 import com.example.huckathon.presentation.screens.profile.ProfileScreen
 import com.example.huckathon.presentation.screens.register.RegisterScreen
 
@@ -77,7 +73,7 @@ fun AppNavigation(startDestination: String) {
         composable(Screen.MapScreen.route) {
             MapScreen(
                 navController = navController,
-                onClickedPayment = { option, city ->
+                onCheckAndGotoPayment = { option, city ->
                     if (option.is_payable)
                     {
                         navController
@@ -91,9 +87,6 @@ fun AppNavigation(startDestination: String) {
                             .set("city", city)
 
                         navController.navigate(Screen.PaymentScreen.route)
-                    } else
-                    {
-                        // TODO: draw route on your map here
                     }
                 },
                 navigateBack = {
@@ -126,7 +119,9 @@ fun AppNavigation(startDestination: String) {
 
         composable(Screen.Chatbot.route) {
             Box(
-                Modifier.fillMaxSize().background(Color.Black),
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Chatbot!", color = Color.White)
@@ -135,7 +130,9 @@ fun AppNavigation(startDestination: String) {
 
         composable(Screen.Settings.route) {
             Box(
-                Modifier.fillMaxSize().background(Color.Black),
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
                 Text("Settings", color = Color.White)

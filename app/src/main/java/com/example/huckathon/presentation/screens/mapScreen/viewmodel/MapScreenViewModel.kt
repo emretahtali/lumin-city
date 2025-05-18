@@ -54,6 +54,10 @@ class MapScreenViewModel : ViewModel() {
         }
     }
 
+    fun resetNavigationData() {
+        _navigationResult.value = null;
+        _routePoints.value = emptyList();
+    }
 
     fun onPOIClick(context: Context, poi: PointOfInterest) {
         val newCity = City(
@@ -61,12 +65,10 @@ class MapScreenViewModel : ViewModel() {
             starRating = Random.nextDouble(3.0, 5.0),
             distanceToCity = calculateDistanceInKm(poi.latLng),
             transportOptions = transportOptions,
-            placeID = poi.placeId
+            placeID = poi.placeId,
+            latLng = poi.latLng
         )
         selectCity(newCity)
-
-        getNavigationData(context, poi.latLng)
-        Log.d("Poly Line Created", _routePoints.value.isNotEmpty().toString())
     }
 
     fun calculateDistanceInKm(latLng: LatLng): Double {
@@ -103,7 +105,13 @@ class MapScreenViewModel : ViewModel() {
             name = "Walking",
             iconRes = R.drawable.walking,
             minutesLeft = "15 min",
-            impact = "Zero impact"
+            impact = "Zero impact",
+            onClick = { context: Context ->
+                if (selectedCity.value != null) {
+                    getNavigationData(context, selectedCity.value!!.latLng)
+                    clearSelectedCity()
+                }
+            }
         ),
         TransportOption(
             name = "Autonomous Vehicle",
@@ -111,19 +119,32 @@ class MapScreenViewModel : ViewModel() {
             minutesLeft = "3 min",
             impact = "Low impact",
             is_payable = true,
-            credit = 6
+            credit = 6,
+            onClick = {  }
         ),
         TransportOption(
             name = "Bio-Bicycle",
             iconRes = R.drawable.bicycle,
             minutesLeft = "8 min",
-            impact = "Zero impact"
+            impact = "Zero impact",
+            onClick = { context: Context ->
+                if (selectedCity.value != null) {
+                    getNavigationData(context, selectedCity.value!!.latLng)
+                    clearSelectedCity()
+                }
+            }
         ),
         TransportOption(
             name = "Car",
             iconRes = R.drawable.car,
             minutesLeft = "5 min",
-            impact = "Minimal impact"
+            impact = "Minimal impact",
+            onClick = { context: Context ->
+                if (selectedCity.value != null) {
+                    getNavigationData(context, selectedCity.value!!.latLng)
+                    clearSelectedCity()
+                }
+            }
         )
     )
 }

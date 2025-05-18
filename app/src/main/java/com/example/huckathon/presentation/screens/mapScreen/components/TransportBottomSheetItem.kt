@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -38,9 +39,11 @@ private val BottomSheetName = Color.White
 fun TransportBottomSheetItem(
     option: TransportOption,
     city: City,
-    onOptionSelected: (TransportOption, City) -> Unit,
+    onCheckAndGotoPayment: (TransportOption, City) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -56,7 +59,10 @@ fun TransportBottomSheetItem(
                 ambientColor = Color(0x664CAF50),
                 spotColor = Color(0x664CAF50)
             )
-            .clickable { onOptionSelected(option, city) },
+            .clickable {
+                option.onClick(context)
+                onCheckAndGotoPayment(option, city)
+            },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = BottomSheetBackground),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),

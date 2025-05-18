@@ -52,4 +52,26 @@ object OpenAIClient {
         val chat = json.decodeFromString<ChatResponse>(body)
         return chat.choices.first().message.content.trim()
     }
+    suspend fun getSuggestionWithSystemPrompt(
+        prompt: String,
+        systemPrompt: String
+    ): String {
+        val systemMessage = ChatMessage(role = "system", content = systemPrompt)
+        val userMessage = ChatMessage(role = "user", content = prompt)
+
+        val request = ChatRequest(
+            model = "gpt-4o-mini",
+            messages = listOf(systemMessage, userMessage)
+        )
+
+        val response: HttpResponse = client.post(ENDPOINT) {
+            header("api-key", apiKey)
+            contentType(ContentType.Application.Json)
+            setBody(json.encodeToString(request))
+        }
+
+        val body = response.bodyAsText()
+        val chat = json.decodeFromString<ChatResponse>(body)
+        return chat.choices.first().message.content.trim()
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.huckathon.presentation.screens.mapScreen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -7,8 +9,12 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -23,25 +29,32 @@ import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
+import com.example.huckathon.network.SuggestionCard
+import com.example.huckathon.network.TransportViewModel
 import com.example.huckathon.presentation.screens.mapScreen.components.CityBottomSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.LeftSheetToggleButton
 import com.example.huckathon.presentation.screens.mapScreen.components.RoutePersonaLeftSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.MapComponent
 import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.Unit
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
-    viewModel: MapScreenViewModel = viewModel(),
+    mapVm: MapScreenViewModel = viewModel(),
+    recVm: TransportViewModel = viewModel(),
     onClickedPayment: (TransportOption, City) -> Unit,
     navigateBack: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val selectedCity by viewModel.selectedCity.collectAsState()
+    val selectedCity by mapVm.selectedCity.collectAsState()
     var isLeftSheetVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val userlocation by mapVm.userLocation.collectAsState()
 
     val targetPeekHeight by remember(selectedCity) {
         mutableStateOf(if (selectedCity != null) 400.dp else 0.dp)
@@ -52,21 +65,30 @@ fun MapScreen(
         animationSpec = tween(durationMillis = 100)
     )
 
+    val userid = FirebaseAuth.getInstance().currentUser?.uid
+
     BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            selectedCity?.let { city ->
-                CityBottomSheet(city = city, onClickedPayment)
-            }
-        },
-        sheetPeekHeight = animatedPeekHeight,
-        sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 20.dp),
+        scaffoldState     = scaffoldState,
+        sheetPeekHeight   = animatedPeekHeight,
+        sheetShape        = RoundedCornerShape(topStart = 15.dp, topEnd = 20.dp),
         sheetContainerColor = Color(0xFF1E2A3A),
-        sheetContentColor = Color.White,
-        containerColor = Color(0xFF0A121E)
+        sheetContentColor   = Color.White,
+        containerColor      = Color(0xFF0A121E),
+        sheetContent = {
+            selectedCity?.takeIf { userlocation != null }?.let { city ->
+                CityBottomSheet(
+                    city            = city,
+                    userLocation    = userlocation!!,
+                    userId          = userid ?: "",
+                    recVm           = recVm,
+                    onOptionSelected = onClickedPayment,
+                    modifier        = Modifier.fillMaxWidth()
+                )
+            }
+        }
     ) { paddingValues ->
 
-        MapComponent (viewModel = viewModel) { navigateBack()}
+        MapComponent (viewModel = mapVm) { navigateBack()}
 
         if (!isLeftSheetVisible) {
             Box(

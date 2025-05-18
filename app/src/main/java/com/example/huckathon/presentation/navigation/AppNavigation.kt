@@ -1,6 +1,8 @@
 package com.example.huckathon.presentation.navigation
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +20,7 @@ import com.example.huckathon.presentation.screens.paymentscreen.viewmodel.Paymen
 import com.example.huckathon.presentation.screens.profile.ProfileScreen
 import com.example.huckathon.presentation.screens.register.RegisterScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun AppNavigation(startDestination: String) {

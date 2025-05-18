@@ -1,43 +1,37 @@
 package com.example.huckathon.presentation.screens.profile.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.huckathon.R
-import com.example.huckathon.presentation.screens.profile.components.Destination
-import com.example.huckathon.presentation.screens.profile.components.Feature
-import com.example.huckathon.presentation.screens.profile.uistate.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import com.example.huckathon.domain.models.Friend
+import com.example.huckathon.domain.models.Profile
+import kotlinx.coroutines.flow.asStateFlow
 
 class ProfileViewModel : ViewModel() {
+    private val _profile = MutableStateFlow(
+        Profile(
+            userName = "Yusuf Asım Demirhan",
+            userLevel = "Biyo Level 31",
+            ecoScore = 82,
+            warriorDistanceKm = 12.4,
+            steps = 10234,
+            distanceKm = 8.7,
+            weightKg = 68.5,
+            friends = listOf(
+                Friend("Alice", R.drawable.friends_icon),
+                Friend("Bob",   R.drawable.friends_icon),
+                Friend("Carol", R.drawable.friends_icon),
+                Friend("Dave",  R.drawable.friends_icon)
+            )
+        )
+    )
+    val profile: StateFlow<Profile> = _profile.asStateFlow()
+}
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState
 
-    init {
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    userName = "John Doe",
-                    userLevel = "Level 5",
-                    features = listOf(
-                        Feature(iconRes = R.drawable.hearth_rate, title = "Heart Rate", value = "75 bpm"),
-                        Feature(iconRes = R.drawable.steps,      title = "Steps",      value = "10.234"),
-                        Feature(iconRes = R.drawable.hearth_rate,   title = "Calories",   value = "560 kcal")
-                    ),
-                    allDestinations = listOf(
+/*allDestinations = listOf(
                         Destination(name = "Eiffel Tower",  distance = "5 km"),
                         Destination(name = "Louvre Museum", distance = "6.4 km"),
                         Destination(name = "Notre-Dame",     distance = "5.2 km")
-                    )
-                )
-            }
-        }
-    }
-
-    fun onSearchQueryChanged(newQuery: String) {
-        _uiState.update { it.copy(searchQuery = newQuery) }
-    }
-}
+                    )*/

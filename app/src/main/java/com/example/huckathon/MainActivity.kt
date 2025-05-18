@@ -5,7 +5,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.huckathon.presentation.navigation.AppNavigation
 import com.example.huckathon.presentation.navigation.Screen
-import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.ui.theme.HuckathonTheme
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp

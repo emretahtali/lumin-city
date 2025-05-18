@@ -7,6 +7,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
     alias(libs.plugins.kotlin.compose)
     id("com.google.gms.google-services")
+    alias(libs.plugins.serialization)
+
 }
 
 val localProperties = Properties().apply {
@@ -77,9 +79,11 @@ dependencies {
     // Serialization
     implementation(libs.serialization.core)
     implementation(libs.serialization.json)
+    implementation(libs.kotlinx.serialization.json.v151)
 
     // Ktor
     implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.client.content.negotiation)
@@ -109,6 +113,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.espresso.core)
+
+
 
     // Test
     testImplementation(libs.junit)

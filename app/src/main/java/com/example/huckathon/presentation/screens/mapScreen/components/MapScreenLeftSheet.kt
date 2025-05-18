@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 
 private val PanelBackground = Color(0xFF1E2A3A)
-private val CardBackground = Color(0xFF2B3A4D)
+val CardBackground = Color(0xFF2B3A4D)
 private val TextPrimary = Color.White
 private val TextSecondary = Color(0xFFB0B8C1)
 

@@ -27,7 +27,7 @@ fun ProfileHeader(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth().padding(start = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

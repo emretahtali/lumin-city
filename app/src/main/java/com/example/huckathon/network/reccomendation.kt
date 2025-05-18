@@ -24,10 +24,27 @@ class TransportViewModel(
     private val habitManager: HabitManager = HabitManager()
 ) : ViewModel() {
 
-    private val _result = MutableStateFlow<RecommendationResult?>(null)
+    private var _result = MutableStateFlow<RecommendationResult?>(null)
     val result: StateFlow<RecommendationResult?> = _result
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    var cardloading = MutableStateFlow<Boolean>(false)
+
+    fun setCardLoading(key: Boolean)
+    {
+        cardloading.value = key
+    }
+    
+    fun getCardLoading(): Boolean
+    {
+        return cardloading.value
+    }
+
+    fun clearResult()
+    {
+        _result.value = null
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun loadSuggestion(

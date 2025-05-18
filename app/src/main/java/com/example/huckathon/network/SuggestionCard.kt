@@ -25,9 +25,12 @@ fun SuggestionCard(
     options: List<String>
 ) {
     val result by viewModel.result.collectAsState()
+    val loading by viewModel.cardloading.collectAsState()
 
     LaunchedEffect(distanceKm, location, userId, options) {
+        viewModel.clearResult()
         viewModel.loadSuggestion(distanceKm,location,userId,options)
+//        viewModel.setCardLoading(false)
     }
 
     Box(
@@ -39,18 +42,23 @@ fun SuggestionCard(
         when (val r = result) {
             null -> CircularProgressIndicator(modifier = Modifier.padding(start = 150.dp))
             else -> Column {
-                Text(
-                    text = "Recommendation: ${r.recommendation}",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = Color.White
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = "Reason: ${r.reason}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White
-                )
-            }
+//                if (viewModel.getCardLoading()) CircularProgressIndicator(modifier = Modifier.padding(start = 150.dp))
+
+//                else
+//                {
+                    Text(
+                        text = "Recommendation: ${r.recommendation}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = "Reason: ${r.reason}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.White
+                    )
+                }
+//            }
         }
     }
 }

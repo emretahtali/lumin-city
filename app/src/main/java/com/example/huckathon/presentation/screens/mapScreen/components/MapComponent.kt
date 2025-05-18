@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
@@ -95,7 +96,10 @@ fun MapComponent(
         )
         {
             if (polylinePoints.isNotEmpty()) {
-                Polyline(points = polylinePoints)
+                Polyline(
+                    points = polylinePoints,
+                    color = Color.Magenta
+                    )
             }
 
             userLocation?.let {

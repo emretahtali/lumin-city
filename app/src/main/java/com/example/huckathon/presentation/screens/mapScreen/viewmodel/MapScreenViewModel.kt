@@ -1,33 +1,39 @@
 package com.example.huckathon.presentation.screens.mapScreen.viewmodel
 
+import android.content.Context
+import androidx.compose.material3.BottomSheetScaffoldState
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
+import com.example.huckathon.domain.remote.createCityModel
 import com.google.android.gms.maps.model.PointOfInterest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+
 
 class MapScreenViewModel : ViewModel() {
 
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity.asStateFlow()
 
-    fun onPOIClick(poi: PointOfInterest) {
-        val newCity = City(
-            name = poi.name,
-            description = "A point of interest located at ${poi.latLng}",
-            starRating = (3..5).random().toDouble(),
-            distanceToCity = "Unknown",
-            transportOptions = transportOptions
-        )
-
+    suspend fun onPOIClick(context: Context, poi: PointOfInterest) {
+        val newCity = createCityModel(context, poi, transportOptions)
         selectCity(newCity)
     }
 
-    fun clearSelectedLocation() {
+    fun selectCity(city: City) {
+        _selectedCity.value = city
+    }
+    fun selectCityById(cityId: String) {
+        // TODO ileride apiden çekilcek
+    }
+
+    fun clearSelectedCity() {
         _selectedCity.value = null
     }
 
@@ -59,40 +65,4 @@ class MapScreenViewModel : ViewModel() {
             impact = "Minimal impact"
         )
     )
-
-    private val dummyCities = listOf(
-        City(
-            name = "Sky Gardens",
-            description = "A vertical forest complex with autonomous ecosystem maintenance and atmospheric purification systems",
-            starRating = 4.7,
-            distanceToCity = "1.2 km away",
-            transportOptions = transportOptions
-        ),
-        City(
-            name = "Tech Hub",
-            description = "A cutting-edge technology center with advanced research facilities and innovation labs",
-            starRating = 4.3,
-            distanceToCity = "2.5 km away",
-            transportOptions = transportOptions
-        ),
-        City(
-            name = "Eco District",
-            description = "Self-sustaining residential area powered entirely by renewable energy sources",
-            starRating = 4.8,
-            distanceToCity = "3.7 km away",
-            transportOptions = transportOptions
-        )
-    )
-
-    init {
-//        selectCity(0)
-    }
-
-    fun selectCity(city: City) {
-        _selectedCity.value = city
-    }
-
-    fun selectCityById(cityId: String) {
-        // TODO ileride apiden çekilcek
-    }
 }

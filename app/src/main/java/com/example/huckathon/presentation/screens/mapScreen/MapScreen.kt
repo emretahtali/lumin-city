@@ -1,6 +1,7 @@
 package com.example.huckathon.presentation.screens.mapScreen
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -25,6 +28,8 @@ import com.example.huckathon.presentation.screens.mapScreen.components.LeftSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.RoutePersonaLeftSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.MapComponent
 import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.Unit
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +42,26 @@ fun MapScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val selectedCity by viewModel.selectedCity.collectAsState()
     var isLeftSheetVisible by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val targetPeekHeight by remember(selectedCity) {
+        mutableStateOf(if (selectedCity != null) 400.dp else 0.dp)
+    }
+
+    val animatedPeekHeight by animateDpAsState(
+        targetValue = targetPeekHeight,
+        animationSpec = tween(durationMillis = 100)
+    )
+
+//    LaunchedEffect(selectedCity) {
+//        if (selectedCity != null && !scaffoldState.bottomSheetState.isVisible) {
+//            coroutineScope.launch {
+//                // Delay ensures BottomSheet is fully composed before triggering show()
+//                delay(100)
+//                scaffoldState.bottomSheetState.show()
+//            }
+//        }
+//    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -45,7 +70,7 @@ fun MapScreen(
                 CityBottomSheet(city = city, onClickedPayment)
             }
         },
-        sheetPeekHeight = if (selectedCity != null) 128.dp else 0.dp,
+        sheetPeekHeight = animatedPeekHeight,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 20.dp),
         sheetContainerColor = Color(0xFF1E2A3A),
         sheetContentColor = Color.White,
@@ -53,6 +78,7 @@ fun MapScreen(
     ) { paddingValues ->
 
         MapComponent (viewModel = viewModel) { navigateBack()}
+
         if (!isLeftSheetVisible) {
             Box(
                 modifier = Modifier

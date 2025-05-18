@@ -1,5 +1,6 @@
 package com.example.huckathon.domain.models
 
+import android.R
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
@@ -9,5 +10,6 @@ data class City(
     val description: String,
     val starRating: Double,
     val distanceToCity: String,
-    val transportOptions: List<TransportOption>
+    val transportOptions: List<TransportOption>,
+    val placeID: String
 ) : Parcelable

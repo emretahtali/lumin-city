@@ -30,6 +30,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
+
+        buildConfigField("String", "PLACES_API_KEY", "\"${localProperties["PLACES_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -50,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -95,9 +98,11 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.maps.services)
 
+    implementation("com.google.android.libraries.places:places:4.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
     implementation("com.google.accompanist:accompanist-permissions:0.37.3")
     implementation("androidx.compose.material3:material3:1.3.2")
+    implementation("com.google.android.material:material:1.12.0")
 
     implementation(libs.androidx.navigation.compose)
 

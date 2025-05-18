@@ -45,14 +45,14 @@ fun MapScreen(
                 CityBottomSheet(city = city, onClickedPayment)
             }
         },
-        sheetPeekHeight = 128.dp,
+        sheetPeekHeight = if (selectedCity != null) 128.dp else 0.dp,
         sheetShape = RoundedCornerShape(topStart = 15.dp, topEnd = 20.dp),
         sheetContainerColor = Color(0xFF1E2A3A),
         sheetContentColor = Color.White,
         containerColor = Color(0xFF0A121E)
     ) { paddingValues ->
 
-        MapComponent { navigateBack()}
+        MapComponent (viewModel = viewModel) { navigateBack()}
         if (!isLeftSheetVisible) {
             Box(
                 modifier = Modifier

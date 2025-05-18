@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
@@ -49,7 +51,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerState
 
 @Composable
-fun MapComponent(navigateBack: () -> Unit) {
+fun MapComponent(
+    viewModel: MapScreenViewModel,
+    navigateBack: () -> Unit
+) {
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
@@ -91,7 +96,11 @@ fun MapComponent(navigateBack: () -> Unit) {
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState,
-            uiSettings = MapUiSettings(zoomControlsEnabled = false)
+            uiSettings = MapUiSettings(zoomControlsEnabled = false),
+            onPOIClick = { poi ->
+                Log.d("POI_CLICK", "POI name: ${poi.name}, LatLng: ${poi.latLng}, PlaceId: ${poi.placeId}")
+                viewModel.onPOIClick(poi)
+            }
         )
         {
             userLocation?.let {

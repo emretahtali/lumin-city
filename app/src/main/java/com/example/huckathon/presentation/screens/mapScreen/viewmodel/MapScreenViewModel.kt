@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
+import com.google.android.gms.maps.model.PointOfInterest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,6 +14,22 @@ class MapScreenViewModel : ViewModel() {
 
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity.asStateFlow()
+
+    fun onPOIClick(poi: PointOfInterest) {
+        val newCity = City(
+            name = poi.name,
+            description = "A point of interest located at ${poi.latLng}",
+            starRating = (3..5).random().toDouble(),
+            distanceToCity = "Unknown",
+            transportOptions = transportOptions
+        )
+
+        selectCity(newCity)
+    }
+
+    fun clearSelectedLocation() {
+        _selectedCity.value = null
+    }
 
     val transportOptions = listOf(
         TransportOption(
@@ -68,13 +85,11 @@ class MapScreenViewModel : ViewModel() {
     )
 
     init {
-        selectCity(0)
+//        selectCity(0)
     }
 
-    fun selectCity(index: Int) {
-        if (index in dummyCities.indices) {
-            _selectedCity.value = dummyCities[index]
-        }
+    fun selectCity(city: City) {
+        _selectedCity.value = city
     }
 
     fun selectCityById(cityId: String) {

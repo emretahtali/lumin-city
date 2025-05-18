@@ -1,15 +1,21 @@
 package com.example.huckathon.presentation.screens.mapScreen.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.huckathon.BuildConfig
 import com.example.huckathon.R
+import com.example.huckathon.data.remote.fetchNavigationInfo
 import com.example.huckathon.domain.models.City
+import com.example.huckathon.domain.models.NavigationResult
 import com.example.huckathon.domain.models.TransportOption
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PointOfInterest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.pow
@@ -26,9 +32,28 @@ class MapScreenViewModel : ViewModel() {
     private val _userLocation = MutableStateFlow<LatLng?>(null)
     val userLocation: StateFlow<LatLng?> = _userLocation
 
+    private val _navigationResult = MutableStateFlow<NavigationResult?>(null)
+    val navigationResult: StateFlow<NavigationResult?> = _navigationResult
+
+    private val _routePoints = MutableStateFlow<List<LatLng>>(emptyList())
+    val routePoints: StateFlow<List<LatLng>> = _routePoints
+
     fun setUserLocation(location: LatLng) {
         _userLocation.value = location
     }
+
+    fun getNavigationData(context: Context, destination: LatLng) {
+        val origin = _userLocation.value ?: return
+
+        viewModelScope.launch {
+            val result = fetchNavigationInfo(origin, destination, BuildConfig.MAPS_API_KEY)
+            result?.let {
+                _navigationResult.value = it
+                _routePoints.value = it.polylinePoints
+            }
+        }
+    }
+
 
     fun onPOIClick(context: Context, poi: PointOfInterest) {
         val newCity = City(
@@ -40,6 +65,8 @@ class MapScreenViewModel : ViewModel() {
         )
         selectCity(newCity)
 
+        getNavigationData(context, poi.latLng)
+        Log.d("Poly Line Created", _routePoints.value.isNotEmpty().toString())
     }
 
     fun calculateDistanceInKm(latLng: LatLng): Double {

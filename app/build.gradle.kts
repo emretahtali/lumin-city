@@ -33,7 +33,7 @@ android {
 
         manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
 
-        buildConfigField("String", "PLACES_API_KEY", "\"${localProperties["PLACES_API_KEY"]}\"")
+        buildConfigField("String", "MAPS_API_KEY", "\"${localProperties["MAPS_API_KEY"]}\"")
     }
 
     buildTypes {
@@ -101,6 +101,9 @@ dependencies {
     // Google Maps
     implementation(libs.maps.compose)
     implementation(libs.maps.services)
+
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("org.json:json:20250517")
 
     implementation("com.google.android.libraries.places:places:4.2.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")

@@ -33,7 +33,9 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.Polyline
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 @Composable
 fun MapComponent(
@@ -43,6 +45,7 @@ fun MapComponent(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val userLocation by viewModel.userLocation.collectAsState()
+    val polylinePoints by viewModel.routePoints.collectAsState()
 
 
 //    val viewModel: LocationMapScreenViewModel = viewModel()
@@ -91,6 +94,11 @@ fun MapComponent(
             },
         )
         {
+            Log.d("Poly Line Exists", polylinePoints.isNotEmpty().toString())
+            if (polylinePoints.isNotEmpty()) {
+                Polyline(points = polylinePoints)
+            }
+
             userLocation?.let {
                 Marker(state = MarkerState(position = it), title = "You are here")
             }

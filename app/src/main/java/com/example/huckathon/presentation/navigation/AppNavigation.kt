@@ -75,45 +75,48 @@ fun AppNavigation(startDestination: String) {
             MapScreen(
                 navController = navController,
                 onCheckAndGotoPayment = { option, city ->
-                    if (option.is_payable)
-                    {
+                    if (option.is_payable) {
                         navController
                             .getBackStackEntry(Screen.MapScreen.route)
-                            .savedStateHandle
-                            .set("transportOption", option)
-
+                            .savedStateHandle["pendingOption"] = option
                         navController
                             .getBackStackEntry(Screen.MapScreen.route)
-                            .savedStateHandle
-                            .set("city", city)
+                            .savedStateHandle["pendingCity"]   = city
 
                         navController.navigate(Screen.PaymentScreen.route)
+                    } else {
+                        navController
+                            .getBackStackEntry(Screen.MapScreen.route)
+                            .savedStateHandle["currentRide"] = option
                     }
                 },
-                navigateBack = {
-                    navController.popBackStack()
-                }
+                navigateBack = { navController.popBackStack() }
             )
         }
 
         composable(Screen.PaymentScreen.route) {
             val previous = navController.getBackStackEntry(Screen.MapScreen.route)
-            val option = previous.savedStateHandle.get<TransportOption>("transportOption")
-            val city = previous.savedStateHandle.get<City>("city")
+            val option: TransportOption? = previous.savedStateHandle["pendingOption"]
+            val city:   City?            = previous.savedStateHandle["pendingCity"]
+
             if (option != null && city != null) {
                 PaymentScreen(
-                    transportOption = option,
-                    city = city,
-                    onBackClick = { navController.popBackStack() },
-                    onPaymentSuccess = { /* ... */ },
-                    onConfirmQr = { navController.navigate(Screen.QRPayScreen.route) }
+                    transportOption  = option,
+                    city             = city,
+                    onBackClick      = { navController.popBackStack() },
+                    onConfirmQr      = { navController.navigate(Screen.QRPayScreen.route) },
+                    onPaymentSuccess = {
+                        previous.savedStateHandle["currentRide"] = option
+                        navController.popBackStack(Screen.MapScreen.route, false)
+                    }
                 )
             }
         }
+
         composable(Screen.QRPayScreen.route) {
             QRPayScreen(
                 onQrScanned = {
-                    navController.popBackStack(Screen.MapScreen.route, false)
+                    navController.navigate(Screen.MapScreen.route)
                 }
             )
         }

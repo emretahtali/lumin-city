@@ -19,6 +19,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -37,6 +38,7 @@ import com.example.huckathon.presentation.screens.mapScreen.components.CityBotto
 import com.example.huckathon.presentation.screens.mapScreen.components.LeftSheetToggleButton
 import com.example.huckathon.presentation.screens.mapScreen.components.RoutePersonaLeftSheet
 import com.example.huckathon.presentation.screens.mapScreen.components.MapComponent
+import com.example.huckathon.presentation.screens.mapScreen.components.RideStatusCard
 import com.example.huckathon.presentation.screens.mapScreen.viewmodel.MapScreenViewModel
 import com.example.huckathon.presentation.screens.profile.PrimaryTextColor
 import com.example.huckathon.presentation.screens.profile.SecondaryTextColor
@@ -62,6 +64,11 @@ fun MapScreen(
     val peekHeight by animateDpAsState(peek, tween(100))
     var leftOpen by remember { mutableStateOf(false) }
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    var currentRide by remember { mutableStateOf<TransportOption?>(null) }
+    val startRideAndPay: (TransportOption, City) -> Unit = { option, city ->
+        currentRide = option
+        onCheckAndGotoPayment(option, city)
+    }
 
     // Scaffold for bottom bar + background
     Scaffold(
@@ -118,7 +125,7 @@ fun MapScreen(
                         userLocation = userLoc!!,
                         userId = userId,
                         recVm = recVm,
-                        onCheckAndGotoPayment = onCheckAndGotoPayment,
+                        onCheckAndGotoPayment = startRideAndPay,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 90.dp)
@@ -128,6 +135,30 @@ fun MapScreen(
         ) { sheetPadding ->
             Box(Modifier.fillMaxSize().padding()) {
                 MapComponent(viewModel = mapVm) { navigateBack() }
+
+                currentRide?.let { ride ->
+                    val eta = ride.minutesLeft
+                        .substringBefore(" ")
+                        .toIntOrNull() ?: 0
+
+                    val icon = when (ride.name) {
+                        "Walking"            -> R.drawable.walking
+                        "Autonomous Vehicle" -> R.drawable.auto_vehicle
+                        "Bio-Bicycle"        -> R.drawable.bicycle
+                        "Car"                -> R.drawable.auto_vehicle
+                        else                 -> R.drawable.car
+                    }
+
+                    RideStatusCard(
+                        iconRes    = icon,
+                        title      = ride.name,
+                        status     = "On the way",
+                        etaMinutes = eta,
+                        modifier   = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 16.dp)
+                    )
+                }
 
                 // sol panel drawer
                 if (!leftOpen) {

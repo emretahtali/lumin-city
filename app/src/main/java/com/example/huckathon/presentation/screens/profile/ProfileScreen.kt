@@ -65,7 +65,7 @@ fun ProfileScreen(
                             when (screen) {
                                 Screen.MapScreen   -> navController.navigate(screen.route)
                                 Screen.Profile     -> { /* already here */ }
-                                Screen.Chatbot     -> { /* TODO */ }
+                                Screen.Chatbot     -> { navController.navigate(screen.route)}
                                 Screen.Settings    -> { /* TODO */ }
                                 else         -> navController.navigate(screen.route) {
                                     popUpTo(Screen.Profile.route) { inclusive = true }

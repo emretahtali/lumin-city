@@ -47,7 +47,7 @@ fun TransportBottomSheetItem(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 6.dp)
+            .padding(vertical = 0.dp)
             .border(
                 width = 1.dp,
                 color = Color(0x664CAF50),

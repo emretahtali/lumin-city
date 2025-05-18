@@ -12,7 +12,7 @@ class ProfileViewModel : ViewModel() {
     private val _profile = MutableStateFlow(
         Profile(
             userName = "Yusuf Asım Demirhan",
-            userLevel = "Biyo Level 31",
+            userLevel = "Biyo Level 37",
             ecoScore = 82,
             warriorDistanceKm = 12.4,
             steps = 10234,

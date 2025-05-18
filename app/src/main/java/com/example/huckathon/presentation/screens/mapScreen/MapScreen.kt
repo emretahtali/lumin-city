@@ -119,7 +119,9 @@ fun MapScreen(
                         userId = userId,
                         recVm = recVm,
                         onCheckAndGotoPayment = onCheckAndGotoPayment,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 90.dp)
                     )
                 }
             }

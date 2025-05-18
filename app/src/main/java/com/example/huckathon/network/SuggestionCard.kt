@@ -11,10 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.huckathon.presentation.screens.mapScreen.components.CardBackground
-import com.example.huckathon.presentation.screens.profile.BackgroundColor
 import com.example.huckathon.presentation.screens.profile.CardBackgroundColor
-import com.example.huckathon.presentation.screens.profile.SecondaryTextColor
 import com.google.android.gms.maps.model.LatLng
 
 @RequiresApi(Build.VERSION_CODES.O)

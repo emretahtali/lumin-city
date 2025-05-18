@@ -3,9 +3,16 @@ package com.example.huckathon.presentation.navigation
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
 import androidx.navigation.compose.rememberNavController
@@ -64,11 +71,12 @@ fun AppNavigation(startDestination: String) {
         }
 
         composable(Screen.Profile.route) {
-            ProfileScreen()
+            ProfileScreen(navController = navController)
         }
 
         composable(Screen.MapScreen.route) {
             MapScreen(
+                navController = navController,
                 onClickedPayment = { option, city ->
                     if (option.is_payable)
                     {
@@ -114,6 +122,24 @@ fun AppNavigation(startDestination: String) {
                     navController.popBackStack(Screen.MapScreen.route, false)
                 }
             )
+        }
+
+        composable(Screen.Chatbot.route) {
+            Box(
+                Modifier.fillMaxSize().background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Chatbot!", color = Color.White)
+            }
+        }
+
+        composable(Screen.Settings.route) {
+            Box(
+                Modifier.fillMaxSize().background(Color.Black),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Settings", color = Color.White)
+            }
         }
     }
 }

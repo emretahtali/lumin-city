@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -21,12 +22,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.huckathon.R
 import com.example.huckathon.network.OpenAIClient
 import kotlinx.coroutines.delay
@@ -40,15 +44,18 @@ data class Message(
     val isUser: Boolean
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatBotScreen() {
+fun ChatBotScreen(
+    navController: NavHostController
+) {
     var messages by remember { mutableStateOf(listOf<Message>()) }
     var input by remember { mutableStateOf(TextFieldValue("")) }
-    val coroutineScope = rememberCoroutineScope()
     var showImageDialog by remember { mutableStateOf(false) }
-
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-    
+
+    // ilk karşılama mesajı
     LaunchedEffect(Unit) {
         messages = messages + Message(
             text = "Merhaba, ben Biyo-Chat! Size nasıl yardımcı olabilirim? Trafikte bir ihbarınız mı var?",
@@ -56,28 +63,11 @@ fun ChatBotScreen() {
         )
     }
 
-
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-            bitmap?.let {
-                val uri = saveBitmapToCache(context, it)
-                uri?.let {
-                    messages = messages + Message(imageUri = uri.toString(), isUser = true)
-                    coroutineScope.launch {
-                        delay(400)
-                        messages += Message(
-                            text = "İhbarınız alınmıştır. En kısa sürede incelenip tarafınıza dönüş yapılacaktır.",
-                            isUser = false
-                        )
-                    }
-                }
-            }
-        }
-
-    val galleryLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                messages = messages + Message(imageUri = it.toString(), isUser = true)
+    // kamera / galeri launcher
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bmp: Bitmap? ->
+        bmp?.let {
+            saveBitmapToCache(context, it)?.let { uri ->
+                messages = messages + Message(imageUri = uri.toString(), isUser = true)
                 coroutineScope.launch {
                     delay(400)
                     messages += Message(
@@ -87,112 +77,127 @@ fun ChatBotScreen() {
                 }
             }
         }
+    }
+    val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            messages = messages + Message(imageUri = it.toString(), isUser = true)
+            coroutineScope.launch {
+                delay(400)
+                messages += Message(
+                    text = "İhbarınız alınmıştır. En kısa sürede incelenip tarafınıza dönüş yapılacaktır.",
+                    isUser = false
+                )
+            }
+        }
+    }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFF121212))
-            .padding(8.dp)
-    ) {
-        if (messages.isEmpty()) {
-            Box(
+    Scaffold(
+        containerColor = Color(0xFF121212),
+        bottomBar = {
+            NavigationBar(containerColor = Color(0xFF121212)) {
+                val items = listOf(
+                    "map_screen"    to R.drawable.harita,
+                    "chatbot"       to R.drawable.chatbot,
+                    "profile"       to R.drawable.profile,
+                    "settings"      to R.drawable.settings
+                )
+                val current = navController.currentBackStackEntryAsState().value?.destination?.route
+                items.forEach { (route, icon) ->
+                    NavigationBarItem(
+                        icon = { Icon(painterResource(icon), contentDescription = route) },
+                        selected = current == route,
+                        onClick = {
+                            when (route) {
+                                "map_screen" -> navController.navigate(route)
+                                "chatbot"    -> { /* zaten buradasınız */ }
+                                "profile"    -> navController.navigate(route)
+                                "settings"   -> navController.navigate(route)
+                            }
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor   = Color(0xFF00E676),
+                            unselectedIconColor = Color.Gray,
+                            indicatorColor      = Color.Transparent
+                        )
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(Color(0xFF121212))
+                .padding(innerPadding)
+                .pointerInput(Unit) {
+                    // harita veya chat alanına özel gesture gerekirse buraya
+                    detectHorizontalDragGestures { _, _ -> }
+                }
+        ) {
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                reverseLayout = true,
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                items(messages.reversed()) { msg ->
+                    MessageBubble(msg)
+                    Spacer(Modifier.height(8.dp))
+                }
+            }
+
+            // input + iconlar
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
-                contentAlignment = Alignment.Center
+                    .background(Color(0xFF1E1E1E), RoundedCornerShape(24.dp))
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
-                Text(
-                    text = "Biyo-Chat AI",
-                    color = Color(0xFF00E676),
-                    fontSize = 22.sp,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-            }
-        }
-
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            reverseLayout = true
-        ) {
-            items(messages.reversed()) { msg ->
-                MessageBubble(msg)
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-        }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF1E1E1E), RoundedCornerShape(24.dp))
-                .padding(horizontal = 12.dp, vertical = 8.dp)
-        ) {
-            IconButton(onClick = { showImageDialog = true }) {
-                Icon(
-                    painter = rememberVectorPainter(image = Icons.Default.Image),
-                    contentDescription = "Görsel Ekle",
-                    tint = Color(0xFFFFC107),
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            TextField(
-                value = input,
-                onValueChange = { input = it },
-                modifier = Modifier.weight(1f),
-                placeholder = { Text("Mesajınızı yazın...") },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    unfocusedPlaceholderColor = Color.Gray
-                )
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            IconButton(onClick = {
-                if (input.text.isNotBlank()) {
-                    val userMsg = Message(text = input.text, isUser = true)
-                    messages += userMsg
-                    input = TextFieldValue("")
-                    messages += Message("Yanıt bekleniyor...", isUser = false)
-
-                    coroutineScope.launch {
-                        val reply = OpenAIClient.getSuggestionWithSystemPrompt(
-                            prompt = userMsg.text!!,
-                            systemPrompt = "Sen Biyo-Chat adında bir trafik yardımcısısın. Gelen mesajlara nazikçe ve açıklayıcı şekilde yanıt ver. Eğer bir fotoğraf gelirse bunun işleme alındığını belirt. Bana istersen ihbar verebilirsin"
-                        )
-
-                        messages = messages.dropLast(1) + Message(text = reply, isUser = false)
-                    }
+                IconButton(onClick = { showImageDialog = true }) {
+                    Icon(Icons.Default.Image, contentDescription = "Görsel Ekle", tint = Color(0xFFFFC107))
                 }
-            }) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Gönder",
-                    tint = Color(0xFF00E676),
-                    modifier = Modifier.size(28.dp)
+                Spacer(Modifier.width(8.dp))
+                TextField(
+                    value = input ,
+                    onValueChange = { input = it},
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        cursorColor = Color(0xFF00E676),
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
                 )
+                Spacer(Modifier.width(8.dp))
+                IconButton(onClick = {
+                    val text = input.text.trim()
+                    if (text.isNotEmpty()) {
+                        messages += Message(text = text, isUser = true)
+                        input = TextFieldValue("")
+                        messages += Message(text = "Yanıt bekleniyor...", isUser = false)
+                        coroutineScope.launch {
+                            val reply = OpenAIClient.getSuggestionWithSystemPrompt(
+                                prompt = text,
+                                systemPrompt = "Sen Biyo-Chat adında bir trafik yardımcısısın..."
+                            )
+                            messages = messages.dropLast(1) + Message(text = reply, isUser = false)
+                        }
+                    }
+                }) {
+                    Icon(Icons.Default.Send, contentDescription = "Gönder", tint = Color(0xFF00E676))
+                }
             }
-        }
-
 
             if (showImageDialog) {
                 AlertDialog(
                     onDismissRequest = { showImageDialog = false },
                     confirmButton = {},
                     containerColor = Color(0xFF1E1E1E),
-                    title = {
-                        Text("Görsel Seç", color = Color.White)
-                    },
+                    title = { Text("Görsel Seç", color = Color.White) },
                     text = {
-                        Column(modifier = Modifier.padding(top = 8.dp)) {
+                        Column {
                             Row(
-                                modifier = Modifier
+                                Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         cameraLauncher.launch()
@@ -201,17 +206,12 @@ fun ChatBotScreen() {
                                     .padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.Default.CameraAlt,
-                                    contentDescription = null,
-                                    tint = Color(0xFFFFC107)
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Icon(Icons.Default.CameraAlt, contentDescription = null, tint = Color(0xFFFFC107))
+                                Spacer(Modifier.width(12.dp))
                                 Text("Kamera ile Fotoğraf Çek", color = Color.White)
                             }
-
                             Row(
-                                modifier = Modifier
+                                Modifier
                                     .fillMaxWidth()
                                     .clickable {
                                         galleryLauncher.launch("image/*")
@@ -220,12 +220,8 @@ fun ChatBotScreen() {
                                     .padding(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    Icons.Default.Image,
-                                    contentDescription = null,
-                                    tint = Color(0xFF64B5F6)
-                                )
-                                Spacer(modifier = Modifier.width(12.dp))
+                                Icon(Icons.Default.Image, contentDescription = null, tint = Color(0xFF64B5F6))
+                                Spacer(Modifier.width(12.dp))
                                 Text("Galeriden Görsel Yükle", color = Color.White)
                             }
                         }
@@ -234,24 +230,17 @@ fun ChatBotScreen() {
             }
         }
     }
-
-fun saveBitmapToCache(context: Context, bitmap: Bitmap): Uri? {
-    return try {
-        val cachePath = File(context.cacheDir, "images")
-        cachePath.mkdirs()
-
-        val file = File(cachePath, "photo_${System.currentTimeMillis()}.jpg")
-        val stream = FileOutputStream(file)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        stream.flush()
-        stream.close()
-
-        Uri.fromFile(file)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
 }
 
-
-
+private fun saveBitmapToCache(context: Context, bitmap: Bitmap): Uri? {
+    return try {
+        val cacheDir = File(context.cacheDir, "images").apply { mkdirs() }
+        val file = File(cacheDir, "photo_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+        }
+        Uri.fromFile(file)
+    } catch (e: Exception) {
+        e.printStackTrace(); null
+    }
+}

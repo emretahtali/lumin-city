@@ -15,6 +15,7 @@ import androidx.navigation.compose.*
 import androidx.navigation.compose.rememberNavController
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
+import com.example.huckathon.presentation.screens.AIChatBot.ChatBotScreen
 import com.example.huckathon.presentation.screens.login.LoginScreen
 import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.presentation.screens.mapScreen.MapScreen
@@ -118,14 +119,7 @@ fun AppNavigation(startDestination: String) {
         }
 
         composable(Screen.Chatbot.route) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.Black),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Chatbot!", color = Color.White)
-            }
+            ChatBotScreen(navController = navController)
         }
 
         composable(Screen.Settings.route) {

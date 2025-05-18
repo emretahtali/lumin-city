@@ -88,7 +88,7 @@ fun MapScreen(
                                     popUpTo(Screen.MapScreen.route) { inclusive = true }
                                 }
                                 Screen.Profile   -> navController.navigate(screen.route)
-                                Screen.Chatbot   -> { /* TODO: chatbot */ }
+                                Screen.Chatbot   -> { navController.navigate(screen.route) }
                                 Screen.Settings  -> { /* TODO: settings */ }
                                 else             -> {}
                             }

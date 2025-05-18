@@ -30,18 +30,26 @@ fun SuggestionCard(
         viewModel.loadSuggestion(distanceKm,location,userId,options)
     }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(5.dp)
+    Box(
+        modifier = Modifier
+            .background(CardBackgroundColor)
+            .padding(10.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Box(Modifier.background(CardBackgroundColor).padding(10.dp)) {
-            when (val r = result) {
-                null -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-                else -> Column {
-                    Text("Recommendation: ${r.recommendation}", style = MaterialTheme.typography.titleMedium, color = Color.White)
-                    Spacer(Modifier.height(8.dp))
-                    Text("Reason: ${r.reason}", style = MaterialTheme.typography.bodyMedium ,color = Color.White)
-                }
+        when (val r = result) {
+            null -> CircularProgressIndicator(modifier = Modifier.padding(start = 150.dp))
+            else -> Column {
+                Text(
+                    text = "Recommendation: ${r.recommendation}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.White
+                )
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Reason: ${r.reason}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White
+                )
             }
         }
     }

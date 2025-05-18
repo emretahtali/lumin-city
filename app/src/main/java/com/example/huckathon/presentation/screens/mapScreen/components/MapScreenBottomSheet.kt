@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
+import okhttp3.internal.format
 
 private val BottomSheetBackground = Color(0xFF1E2A3A)
 private val BottomSheetText = Color(0xFFB0B8C1)
@@ -44,6 +45,7 @@ fun CityBottomSheet(
             .padding(24.dp)
     ) {
         Text(
+            modifier = Modifier.fillMaxWidth(),
             text = city.name,
             color = BottomSheetName,
             fontSize = 32.sp,
@@ -65,7 +67,7 @@ fun CityBottomSheet(
             Spacer(modifier = Modifier.width(3.dp))
 
             Text(
-                text = city.starRating.toString(),
+                text = format("%.2f", city.starRating),
                 fontSize = 19.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Medium
@@ -74,24 +76,13 @@ fun CityBottomSheet(
             Spacer(modifier = Modifier.width(25.dp))
 
             Text(
-                text = city.distanceToCity,
+                text = format("%.2f km", city.distanceToCity),
                 color = BottomSheetText,
                 fontSize = 16.sp,
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Normal
             )
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = city.description,
-            color = BottomSheetText,
-            fontSize = 16.sp,
-            fontFamily = FontFamily.SansSerif,
-            fontWeight = FontWeight.Normal,
-            lineHeight = 24.sp
-        )
 
         Spacer(modifier = Modifier.height(24.dp))
 

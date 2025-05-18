@@ -42,7 +42,6 @@ fun MapScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val selectedCity by viewModel.selectedCity.collectAsState()
     var isLeftSheetVisible by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
 
     val targetPeekHeight by remember(selectedCity) {
         mutableStateOf(if (selectedCity != null) 400.dp else 0.dp)
@@ -52,16 +51,6 @@ fun MapScreen(
         targetValue = targetPeekHeight,
         animationSpec = tween(durationMillis = 100)
     )
-
-//    LaunchedEffect(selectedCity) {
-//        if (selectedCity != null && !scaffoldState.bottomSheetState.isVisible) {
-//            coroutineScope.launch {
-//                // Delay ensures BottomSheet is fully composed before triggering show()
-//                delay(100)
-//                scaffoldState.bottomSheetState.show()
-//            }
-//        }
-//    }
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,

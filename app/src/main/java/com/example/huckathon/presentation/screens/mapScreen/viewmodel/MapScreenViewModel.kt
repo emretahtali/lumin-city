@@ -1,20 +1,21 @@
 package com.example.huckathon.presentation.screens.mapScreen.viewmodel
 
 import android.content.Context
-import androidx.compose.material3.BottomSheetScaffoldState
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.runtime.remember
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
-import com.example.huckathon.domain.remote.createCityModel
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PointOfInterest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 
 class MapScreenViewModel : ViewModel() {
@@ -29,9 +30,34 @@ class MapScreenViewModel : ViewModel() {
         _userLocation.value = location
     }
 
-    suspend fun onPOIClick(context: Context, poi: PointOfInterest) {
-        val newCity = createCityModel(context, poi, transportOptions)
+    fun onPOIClick(context: Context, poi: PointOfInterest) {
+        val newCity = City(
+            name = poi.name,
+            starRating = Random.nextDouble(3.0, 5.0),
+            distanceToCity = calculateDistanceInKm(poi.latLng),
+            transportOptions = transportOptions,
+            placeID = poi.placeId
+        )
         selectCity(newCity)
+
+    }
+
+    fun calculateDistanceInKm(latLng: LatLng): Double {
+        if (userLocation.value == null) return 0.0
+
+        val earthRadius = 6371.0 // Radius of the Earth in km
+
+        val latDistance = Math.toRadians(userLocation.value!!.latitude - latLng.latitude)
+        val lonDistance = Math.toRadians(userLocation.value!!.longitude - latLng.longitude)
+
+        val a = sin(latDistance / 2).pow(2.0) +
+                cos(Math.toRadians(latLng.latitude)) *
+                cos(Math.toRadians(userLocation.value!!.latitude)) *
+                sin(lonDistance / 2).pow(2.0)
+
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return earthRadius * c
     }
 
     fun selectCity(city: City) {

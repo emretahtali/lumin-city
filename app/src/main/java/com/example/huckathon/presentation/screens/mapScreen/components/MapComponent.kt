@@ -43,7 +43,6 @@ fun MapComponent(
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val userLocation by viewModel.userLocation.collectAsState()
-    val coroutineScope = rememberCoroutineScope()
 
 
 //    val viewModel: LocationMapScreenViewModel = viewModel()
@@ -85,9 +84,7 @@ fun MapComponent(
             uiSettings = MapUiSettings(zoomControlsEnabled = false),
             onPOIClick = { poi ->
                 Log.d("POI_CLICK", "POI name: ${poi.name}, LatLng: ${poi.latLng}, PlaceId: ${poi.placeId}")
-                coroutineScope.launch {
-                    viewModel.onPOIClick(context, poi)
-                }
+                viewModel.onPOIClick(context, poi)
             },
             onMapClick = {
                 viewModel.clearSelectedCity()

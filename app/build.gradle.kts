@@ -116,7 +116,8 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation(libs.firebase.auth.ktx)
     implementation(libs.androidx.espresso.core)
-
+    implementation(libs.androidx.foundation.android)
+    implementation(libs.androidx.foundation.android)
 
 
     // Test

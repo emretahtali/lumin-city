@@ -55,6 +55,7 @@ fun PaymentScreen(
     city: City,
     onBackClick: () -> Unit,
     onPaymentSuccess: () -> Unit,
+    onConfirmQr: () -> Unit,
     viewModel: PaymentScreenViewModel = viewModel()
 ) {
     val ui by viewModel.uiState.collectAsState()
@@ -155,7 +156,7 @@ fun PaymentScreen(
 
             // Confirm with QR
             Button(
-                onClick = { /* TODO: QR navigation */ },
+                onClick = { onConfirmQr() },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

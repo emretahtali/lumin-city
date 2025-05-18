@@ -7,5 +7,5 @@ sealed class Screen(val route: String) {
     object Profile: Screen("profile")
     object MapScreen: Screen("map_screen")
     object PaymentScreen : Screen("payment_screen")
-    object QRPayScreen   : Screen("qr_pay_screen")    // TODO
+    object QRPayScreen   : Screen("qr_pay_screen")
 }

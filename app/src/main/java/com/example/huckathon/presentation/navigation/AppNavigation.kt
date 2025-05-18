@@ -13,6 +13,7 @@ import com.example.huckathon.presentation.screens.login.LoginScreen
 import com.example.huckathon.presentation.screens.mainscreen.MainScreen
 import com.example.huckathon.presentation.screens.mapScreen.MapScreen
 import com.example.huckathon.presentation.screens.paymentscreen.PaymentScreen
+import com.example.huckathon.presentation.screens.paymentscreen.QRPayScreen
 import com.example.huckathon.presentation.screens.paymentscreen.viewmodel.PaymentScreenViewModel
 import com.example.huckathon.presentation.screens.profile.ProfileScreen
 import com.example.huckathon.presentation.screens.register.RegisterScreen
@@ -91,27 +92,25 @@ fun AppNavigation(startDestination: String) {
         }
 
         composable(Screen.PaymentScreen.route) {
-            val previousEntry = navController.getBackStackEntry(Screen.MapScreen.route)
-
-            val option = previousEntry
-                .savedStateHandle
-                .get<TransportOption>("transportOption")
-
-            val city = previousEntry
-                .savedStateHandle
-                .get<City>("city")
-
+            val previous = navController.getBackStackEntry(Screen.MapScreen.route)
+            val option = previous.savedStateHandle.get<TransportOption>("transportOption")
+            val city = previous.savedStateHandle.get<City>("city")
             if (option != null && city != null) {
                 PaymentScreen(
                     transportOption = option,
                     city = city,
                     onBackClick = { navController.popBackStack() },
-                    onPaymentSuccess = { /* … */ }
+                    onPaymentSuccess = { /* ... */ },
+                    onConfirmQr = { navController.navigate(Screen.QRPayScreen.route) }
                 )
             }
         }
         composable(Screen.QRPayScreen.route) {
-            // TODO: build your QR‐pay UI here
+            QRPayScreen(
+                onQrScanned = {
+                    navController.popBackStack(Screen.MapScreen.route, false)
+                }
+            )
         }
     }
 }

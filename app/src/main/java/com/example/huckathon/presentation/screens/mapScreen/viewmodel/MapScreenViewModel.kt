@@ -10,6 +10,7 @@ import com.example.huckathon.R
 import com.example.huckathon.domain.models.City
 import com.example.huckathon.domain.models.TransportOption
 import com.example.huckathon.domain.remote.createCityModel
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PointOfInterest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,6 +21,13 @@ class MapScreenViewModel : ViewModel() {
 
     private val _selectedCity = MutableStateFlow<City?>(null)
     val selectedCity: StateFlow<City?> = _selectedCity.asStateFlow()
+
+    private val _userLocation = MutableStateFlow<LatLng?>(null)
+    val userLocation: StateFlow<LatLng?> = _userLocation
+
+    fun setUserLocation(location: LatLng) {
+        _userLocation.value = location
+    }
 
     suspend fun onPOIClick(context: Context, poi: PointOfInterest) {
         val newCity = createCityModel(context, poi, transportOptions)

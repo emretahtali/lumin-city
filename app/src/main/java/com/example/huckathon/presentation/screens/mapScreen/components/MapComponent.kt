@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,7 @@ fun MapComponent(
 ) {
     val context = LocalContext.current
     val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
-    var userLocation by remember { mutableStateOf<LatLng?>(null) }
+    val userLocation by viewModel.userLocation.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
 
@@ -69,7 +70,7 @@ fun MapComponent(
             ).addOnSuccessListener { location: Location? ->
                 location?.let {
                     val latLng = LatLng(it.latitude, it.longitude)
-                    userLocation = latLng
+                    viewModel.setUserLocation(latLng)
                     cameraPositionState.position = CameraPosition.fromLatLngZoom(latLng, 15f)
                 }
             }

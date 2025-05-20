@@ -34,7 +34,6 @@ fun LoginScreen(OnGotoRegisterScreen: () -> Unit, LoginSuccesful: () -> Unit) {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-
     lateinit var auth: FirebaseAuth
     auth = Firebase.auth
 

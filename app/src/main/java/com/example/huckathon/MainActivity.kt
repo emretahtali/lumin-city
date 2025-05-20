@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HuckathonTheme {
-                AppNavigation(startDestination = Screen.MapScreen.route)
+                AppNavigation(startDestination = Screen.MainScreen.route)
             }
         }
     }

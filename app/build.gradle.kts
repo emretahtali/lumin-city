@@ -34,6 +34,8 @@ android {
         manifestPlaceholders["MAPS_API_KEY"] = localProperties.getProperty("MAPS_API_KEY") ?: ""
 
         buildConfigField("String", "MAPS_API_KEY", "\"${localProperties["MAPS_API_KEY"]}\"")
+        buildConfigField("String", "OPENAI_API_ENDPOINT", "\"${localProperties["OPENAI_API_ENDPOINT"]}\"")
+        buildConfigField("String", "OPENAI_API_KEY", "\"${localProperties["OPENAI_API_KEY"]}\"")
     }
 
     buildTypes {

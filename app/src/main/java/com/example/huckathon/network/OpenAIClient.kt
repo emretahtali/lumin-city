@@ -1,5 +1,6 @@
 package com.example.huckathon.network
 
+import com.example.huckathon.BuildConfig
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.CIO
@@ -34,11 +35,9 @@ object OpenAIClient {
     private val client = HttpClient(CIO)
     private val json = Json { ignoreUnknownKeys = true }
 
-    private const val ENDPOINT =
-        "https://localeyes11.openai.azure.com/openai/deployments/gpt-4o-mini/chat/completions?api-version=2024-08-01-preview"
+    private const val ENDPOINT = BuildConfig.OPENAI_API_ENDPOINT
 
-    private const val apiKey =
-        "FiSavYGhiY7zWpyrJlrfOpMKxyAJ0fyjJGA9sTSwSRtb1WaObBWRJQQJ99BAAC5RqLJXJ3w3AAABACOGcxx0"
+    private const val apiKey = BuildConfig.OPENAI_API_KEY
 
     suspend fun getSuggestion(prompt: String): String {
         val request = ChatRequest(messages = listOf(ChatMessage("user", prompt)))

@@ -4,7 +4,7 @@
 
 ## 🚀 What It Does
 
-- **Smart Route Optimization**: Recommends fastest routes using traffic, habits, and AI.  
+- **Smart Route Optimization**: Recommends fastest routes using traffic, weather, habits, and AI.  
 - **Live Congestion Maps**: Visualizes traffic for smarter choices.  
 - **AI Chatbot**: Natural language assistant for travel help.  
 - **Accessibility Support**: Routes tailored to users with diverse needs.  

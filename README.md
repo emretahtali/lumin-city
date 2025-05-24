@@ -2,8 +2,8 @@
 
 **LuminCity** is a Kotlin-based Android app built in 24 hours during **Harget Huckathon 2025**, where it won **2nd place**. Designed for the fictional world of **Valyria**, the app tackles urban transport inefficiencies using real-time routing, AI, and inclusive design.
 
-### [LuminCity Introduction Video 🔗](https://drive.google.com/file/d/1GGm4WFoq-zrrmBeljUxAjFqqHg7FeocD/view?usp=sharing)
-[![Watch the video](https://github.com/user-attachments/assets/3d44c44a-301b-445c-8217-9487b27f8408)](https://drive.google.com/file/d/1GGm4WFoq-zrrmBeljUxAjFqqHg7FeocD/view?usp=sharing)
+### [LuminCity Introduction Video 🔗](https://drive.google.com/file/d/1LDH-tMfWaPTF7-Ca6eeigsDmKtsP7ccx/view?usp=sharing)
+[![Watch the video](https://github.com/user-attachments/assets/3d44c44a-301b-445c-8217-9487b27f8408)](https://drive.google.com/file/d/1LDH-tMfWaPTF7-Ca6eeigsDmKtsP7ccx/view?usp=sharing)
 
 ## 🚀 What It Does
 
